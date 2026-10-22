@@ -1,6 +1,6 @@
 # Kikyo · 开发工具
 
-基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”“编码工具”“颜色转换”和“JSON 工具”四个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，编码和时间转换在本地浏览器环境完成，均不需要联网。
+基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”“编码工具”“颜色转换”“JSON 工具”和“二维码”五个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，其他工具在本地浏览器环境处理，均不需要联网。
 
 ## 界面预览
 
@@ -39,6 +39,14 @@ RGB 与 HEX 双向转换、ARGB/RGBA 与 32 位整数互转、透明度预览、
 JSON 格式化、压缩、字符串转义和可展开的树形解析，保留大整数与重复键。
 
 ![JSON 工具：格式化输入、树形解析、大整数和类型展示](docs/images/json-tools.png)
+
+### 二维码
+
+文本或网址生成静态二维码，支持 PNG/SVG 下载；上传、拖入或粘贴图片即可解析内容。
+
+![二维码生成：文本网址输入、纠错等级与 PNG/SVG 下载](docs/images/qrcode-generate.png)
+
+![二维码解析：本地图片识别与原始文本结果](docs/images/qrcode-decode.png)
 
 ## 功能
 
@@ -129,6 +137,27 @@ JSON 格式化、压缩、字符串转义和可展开的树形解析，保留大
 - `Ctrl+Enter` 格式化，`Ctrl+Shift+Enter` 压缩。切换页面保留内容，关闭窗口后不保存 JSON 数据。
 - 单次输入最多 2 Mi 个 UTF-16 代码单元，最大深度 128 层、最多 50,000 个值节点。树形视图分批显示展开节点，每批 1,000 项；长字符串在树形中省略显示，完整内容保留在文本结果中。
 
+## 二维码
+
+顶部选择“二维码”，通过“生成二维码”和“解析二维码”切换模式。内容、生成图片和解析结果只保存在当前窗口内存中，切换 Tab 不会丢失，关闭窗口后清除。
+
+### 生成二维码
+
+- 支持文本、网址、中文、Emoji 和多行内容，按 UTF-8 编码；保留首尾空格及换行。网址建议包含 `https://`。
+- 提供 256、384、512、768、1024 px 五种 PNG 尺寸，以及 L / M / Q / H 纠错等级，默认 512 px / M。
+- 支持 PNG 图片和 SVG 矢量文件下载，并可直接“解析此二维码”核对内容。
+- 输入或设置修改后需重新生成，过期结果不能下载。`Ctrl+Enter` 生成。
+- 单次最多 2953 个 UTF-8 字节，不同字符类型和纠错等级的实际容量不同，容量不足会提示减少内容或降低纠错等级。
+- 生成的是内容直接写入图片的静态二维码，无服务端有效期，也不提供动态码、访问统计或短链接托管。
+
+### 解析二维码
+
+- 上传、拖入图片，或在当前页按 `Ctrl+V` 粘贴图片自动识别。支持 PNG、JPEG、WebP、BMP、GIF 首帧。
+- 支持复制解析内容和将内容回填到生成页。网址按纯文本显示，不自动访问或执行。
+- 图片限 20 MiB，单边不超过 8192 px、总像素不超过 2400 万；识别时会按不同分辨率处理，扫描尺寸最大单边 3200 px。
+- 一张图返回首个识别到的二维码，不支持相机、条形码或批量多码识别。模糊、遮挡严重或过小的二维码可能无法读取，请使用清晰完整并留有白色边框的图片。
+- 生成和解析使用 `qrcode`、`jsQR`，均在本地完成，二维码内容与上传图片不会发送到外部服务。
+
 ## 开发环境
 
 Windows 开发需要：
@@ -164,7 +193,7 @@ npm.cmd run tauri dev
 npm run dev
 ```
 
-浏览器地址为 `http://127.0.0.1:1420`。编码工具、颜色转换和 JSON 工具可直接使用；计算器预览会显示提示，表达式和数值进制计算需要在 Tauri 桌面窗口中执行。
+浏览器地址为 `http://127.0.0.1:1420`。编码工具、颜色转换、JSON 工具和二维码可直接使用；计算器预览会显示提示，表达式和数值进制计算需要在 Tauri 桌面窗口中执行。
 
 ## 构建
 
@@ -335,11 +364,19 @@ npm run test:json
 
 默认连接 `http://127.0.0.1:1420`，可通过 `APP_URL` 指定其他开发地址，或通过 `CDP_URL` 接入桌面窗口。覆盖格式化缩进、树形展开、数值原文与重复键保留、转义往返、错误定位、Tab 状态和窄窗口布局；截图与报告写入 `artifacts/`，示例截图同步到 `docs/images/json-tools.png`。
 
+二维码工具界面验证：先启动 `npm run dev`，再执行：
+
+```powershell
+npm run test:qrcode
+```
+
+同样支持 `APP_URL` 指定开发地址、`CDP_URL` 连接桌面窗口和 `BROWSER_PATH` 指定本机浏览器。覆盖 PNG/SVG 下载、中文和多行内容往返、图片上传/拖拽/粘贴事件、非法图片、设置更新和 Tab 状态保留。该脚本使用 PNG、JPEG 识别样例；其他支持格式的识别效果取决于图片内容和清晰度。
+
 ## 项目结构
 
 ```text
 public/calculator.svg             应用图标源文件
-src/App.vue                       四个一级 Tab 的页面容器
+src/App.vue                       五个一级 Tab 的页面容器
 src/views/CalculatorPage.vue       计算器页面
 src/views/EncodingPage.vue         编码工具页面及二级分类
 src/views/ColorPage.vue            RGB/HEX 转换、颜色预览和对照表
@@ -355,6 +392,10 @@ src/json.css                      JSON 编辑区与树形视图样式
 src/components/JsonTree.vue        分批渲染的可折叠 JSON 树
 src/utils/json.ts                 保留数字原文与重复键的 JSON 解析器
 src/utils/color.ts                 RGB/ARGB/RGBA/整数校验与转换
+src/views/QrPage.vue               二维码生成与图片解析页面
+src/qrcode.css                    二维码输入、预览和上传区域样式
+src/utils/qrcode.ts                本地二维码编码、图片识别和输入校验
+scripts/verify-qrcode.mjs           二维码实际界面验证
 src/composables/useCalculator.ts  计算、历史、变量和持久化状态
 src/services/calculator.ts        Tauri 命令调用
 src/types/calculator.ts           前后端数据类型

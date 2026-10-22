@@ -4,5 +4,6 @@ import './style.css'
 import './encoding.css'
 import './color.css'
 import './json.css'
+import './qrcode.css'
 
 createApp(App).mount('#app')
