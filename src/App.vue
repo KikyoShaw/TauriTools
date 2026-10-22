@@ -5,6 +5,7 @@ import EncodingPage from './views/EncodingPage.vue'
 import ColorPage from './views/ColorPage.vue'
 import JsonPage from './views/JsonPage.vue'
 import QrPage from './views/QrPage.vue'
+import DebugPage from './views/DebugPage.vue'
 
 const tabs = [
   { id: 'calculator', label: '计算器', component: CalculatorPage },
@@ -12,6 +13,7 @@ const tabs = [
   { id: 'color', label: '颜色转换', component: ColorPage },
   { id: 'json', label: 'JSON 工具', component: JsonPage },
   { id: 'qrcode', label: '二维码', component: QrPage },
+  { id: 'debug', label: '开发辅助', component: DebugPage },
 ] as const
 const active = ref(0)
 

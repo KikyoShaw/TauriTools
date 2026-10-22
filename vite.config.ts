@@ -6,6 +6,7 @@ const host = process.env.TAURI_DEV_HOST
 export default defineConfig({
   plugins: [vue()],
   clearScreen: false,
+  optimizeDeps: { include: ['hash-wasm'] },
   server: {
     port: 1420,
     strictPort: true,

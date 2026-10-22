@@ -1,0 +1,10 @@
+.debug-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--border); margin-bottom: 22px; }
+.debug-tabs button { border: 0; border-bottom: 2px solid transparent; padding: 12px 22px; background: transparent; color: #8197a8; font-size: 13px; }
+.debug-tabs button.active { color: var(--teal); border-bottom-color: var(--teal); background: #95ceca08; }
+.debug-tabs button:hover { color: #b9d4d6; }
+.debug-page textarea { white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: hidden; }
+@media (max-width: 1200px) {
+  .application-nav { gap: 24px; }
+  .primary-tabs button { min-width: 91px; padding-left: 16px; padding-right: 16px; }
+  .suite-caption { display: none; }
+}
