@@ -1,6 +1,6 @@
 # Kikyo · 开发工具
 
-基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”和“编码工具”两个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，编码和时间转换在本地浏览器环境完成，均不需要联网。
+基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”“编码工具”和“颜色转换”三个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，编码和时间转换在本地浏览器环境完成，均不需要联网。
 
 ## 界面预览
 
@@ -23,6 +23,12 @@ Unicode、UTF-8、URL、ASCII / Native、Hex、HTML、Base64 等工具通过分�
 支持时间戳和日期双向转换，以及秒/毫秒、本地时区/UTC 切换。
 
 ![Unix 时间戳：时间戳与日期双向转换](docs/images/timestamp.png)
+
+### 颜色转换
+
+RGB 与 HEX 双向转换、颜色预览、取色器，以及可搜索的 CSS 命名颜色表。
+
+![颜色转换：RGB 与 HEX 转换面板、颜色预览和标准颜色对照表](docs/images/color-converter.png)
 
 ## 功能
 
@@ -54,6 +60,19 @@ Unicode、UTF-8、URL、ASCII / Native、Hex、HTML、Base64 等工具通过分�
 文本框中 `Ctrl+Enter` 编码，`Ctrl+Shift+Enter` 解码。二进制解码使用严格 UTF-8，非法字节或无效转义会显示错误。Base58 为避免大文本转换阻塞窗口，输入有单独的长度限制。
 
 时间戳单位需要明确选择；无时区日期按选择的本地时区或 UTC 解释，ISO 日期的 `Z` / 时区偏移优先。无效日期（如 2 月 30 日）会报错。秒级输出向下取整，本地夏令时重复时段采用较早一次；需要消除歧义时输入带偏移的 ISO 日期。
+
+## 颜色转换
+
+顶部选择“颜色转换”可使用 RGB 与十六进制颜色码的双向转换：
+
+- **RGB → HEX**：三个通道均为 `0..255` 的整数，例如 `255, 180, 0` → `#FFB400`。
+- **HEX → RGB**：支持 `#RRGGBB` 和 `#RGB`，可省略 `#`，不区分大小写。例如 `#CC00FF` → `204, 0, 255`，`#F80` → `255, 136, 0`。
+- 转换结果使用规范的大写 HEX，支持复制 HEX、RGB 及 CSS `rgb(...)`。
+- 颜色预览随成功转换更新；取色器及对照表色块会同时填入两个转换面板。
+- 对照表包含 **148 个 CSS 标准命名颜色**，支持英文名、中文描述、HEX 和 RGB 搜索，保留 Aqua/Cyan、Gray/Grey 等同色别名。
+- 无效通道、小数、透明度颜色码等输入会显示错误，不会自动截断或取整。切换 Tab 保留输入和结果。
+
+交互参考 [RGB 与十六进制颜色转换工具](https://www.sioe.cn/yingyong/yanse-rgb-16/)，颜色名称和数值采用 CSS 标准。
 
 ## 开发环境
 
@@ -90,7 +109,7 @@ npm.cmd run tauri dev
 npm run dev
 ```
 
-浏览器地址为 `http://127.0.0.1:1420`。编码工具可直接使用；计算器预览会显示提示，表达式和数值进制计算需要在 Tauri 桌面窗口中执行。
+浏览器地址为 `http://127.0.0.1:1420`。编码工具和颜色转换可直接使用；计算器预览会显示提示，表达式和数值进制计算需要在 Tauri 桌面窗口中执行。
 
 ## 构建
 
@@ -245,18 +264,30 @@ npm run test:encoding
 
 该脚本默认使用本机 Microsoft Edge；可用 `BROWSER_PATH` 指定浏览器路径，或设置 `CDP_URL` 连接已开启调试端口的 Tauri 窗口。覆盖各编码往返、非法输入、Tab 状态保留、时间戳和日期校验，并保存截图到 `artifacts/`。
 
+颜色转换界面验证同样支持浏览器或 `CDP_URL` 指定的桌面窗口：
+
+```powershell
+npm run test:colors
+```
+
+覆盖 RGB/HEX 双向转换、边界与非法输入、148 个命名颜色与浏览器 CSS 标准比对、搜索、取色器、Tab 状态和窄窗口布局。
+
 ## 项目结构
 
 ```text
 public/calculator.svg             应用图标源文件
-src/App.vue                       两个一级 Tab 的页面容器
+src/App.vue                       三个一级 Tab 的页面容器
 src/views/CalculatorPage.vue       计算器页面
 src/views/EncodingPage.vue         编码工具页面及二级分类
+src/views/ColorPage.vue            RGB/HEX 转换、颜色预览和对照表
 src/style.css                     计算器深色主题与响应式样式
 src/encoding.css                  工具导航、编码与时间戳样式
+src/color.css                     颜色转换页面样式
+src/data/namedColors.ts            148 个 CSS 标准命名颜色
 src/components/                   分组键盘、转换面板、时间戳工具
 src/utils/encoding.ts              本地文本编码转换
 src/utils/timestamp.ts             日期校验和时间戳转换
+src/utils/color.ts                 RGB/HEX 校验、转换和预览文字颜色
 src/composables/useCalculator.ts  计算、历史、变量和持久化状态
 src/services/calculator.ts        Tauri 命令调用
 src/types/calculator.ts           前后端数据类型

@@ -1,0 +1,78 @@
+.color-converter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.color-converter-card { min-width: 0; padding: 22px; border: 1px solid var(--border); border-radius: 3px; background: #1c2229; }
+.color-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+.color-card-heading h2 { color: #c0cdd5; font-size: 15px; }
+.color-card-heading > span { color: #657789; font-size: 10px; letter-spacing: 1px; }
+.color-converter-card .tool-explanation { margin: 11px 0 21px; }
+.color-rgb-inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.color-rgb-inputs label, .color-hex-input { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.color-rgb-inputs label > span, .color-hex-input > span { display: flex; gap: 8px; align-items: center; color: #a4b5c2; font-size: 12px; }
+.color-rgb-inputs small, .color-hex-input small { color: #697f90; font-size: 10px; }
+.channel-dot { width: 6px; height: 6px; border-radius: 50%; }
+.channel-dot.r { background: #db8e89; }
+.channel-dot.g { background: #85b8a4; }
+.channel-dot.b { background: #8eafe0; }
+.color-page input[type="text"], .color-page input[type="search"], .color-conversion-result input { min-width: 0; width: 100%; height: 39px; border: 1px solid #40505e; background: #171d23; padding: 8px 11px; color: #cfdae4; outline: 0; border-radius: 3px; font-size: 16px; }
+.color-page input:focus { border-color: #8bbdb9; }
+.color-page input::placeholder { color: #596d7e; }
+.color-page input[aria-invalid="true"] { border-color: #b7746b; }
+.color-converter-card > .utility-button { margin-top: 18px; }
+.color-conversion-result { display: flex; align-items: center; gap: 14px; border-top: 1px solid #35414d; margin-top: 21px; padding-top: 18px; }
+.result-color-swatch { display: block; width: 48px; height: 48px; border: 1px solid #ffffff26; border-radius: 4px; flex-shrink: 0; }
+.color-conversion-result label { display: flex; flex: 1; flex-direction: column; gap: 7px; min-width: 0; font-size: 10px; color: #7890a2; }
+.color-conversion-result input { color: var(--teal); padding: 0; height: 25px; border: 0; background: transparent; font-size: 18px; }
+.color-conversion-result .utility-button { flex-shrink: 0; padding: 8px 10px; font-size: 11px; }
+.color-preview-panel { display: flex; align-items: center; gap: 22px; border: 1px solid var(--border); background: #1c2229; margin: 23px 0 26px; padding: 16px; border-radius: 3px; }
+.color-preview-block { width: 172px; min-height: 90px; flex-shrink: 0; border: 1px solid #ffffff1a; border-radius: 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.color-preview-block > span { font-size: 20px; letter-spacing: 1px; }
+.color-preview-block > small { font-size: 10px; opacity: .8; }
+.color-preview-details { margin-right: auto; min-width: 0; }
+.color-preview-details h2 { margin-bottom: 9px; color: #b4c5d0; }
+.color-preview-details > span { color: #8bbeb8; font-size: 13px; }
+.color-preview-details p { font-size: 11px; color: #687f90; margin: 10px 0 0; }
+.color-picker-label { display: flex; align-items: center; gap: 10px; color: #8da2b2; font-size: 12px; cursor: pointer; white-space: nowrap; }
+.color-picker-label input { width: 39px; height: 35px; cursor: pointer; border: 1px solid #485b69; border-radius: 3px; padding: 2px; background: #26313b; }
+.color-reference { min-width: 0; }
+.color-reference-heading { display: flex; justify-content: space-between; align-items: center; gap: 22px; margin-bottom: 15px; }
+.color-reference-heading h2 { color: #b9c8d2; display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.color-reference-heading p { color: #687f90; font-size: 11px; margin: 10px 0 0; }
+.color-search { display: flex; gap: 12px; align-items: center; }
+.color-search input[type="search"] { width: 300px; font-size: 12px; height: 36px; }
+.color-search .text-button { flex-shrink: 0; }
+.color-table-scroll { max-height: 440px; overflow: auto; border: 1px solid var(--border); border-radius: 3px; scrollbar-width: thin; scrollbar-color: #3d4b59 transparent; }
+.color-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+.color-table thead { position: sticky; top: 0; z-index: 1; }
+.color-table thead th { background: #26303a; color: #9baebb; font-weight: 500; white-space: nowrap; }
+.color-table td, .color-table th { border-bottom: 1px solid #313c48; border-right: 1px solid #313c48; padding: 11px 16px; text-align: left; }
+.color-table td:last-child, .color-table th:last-child { border-right: 0; }
+.color-table tbody tr:last-child td, .color-table tbody tr:last-child th { border-bottom: 0; }
+.color-table tbody { background: #1c2229; color: #8da1b1; }
+.color-table tbody th { font-weight: 400; color: #b6c6d2; }
+.color-table tbody tr:hover, .color-table tbody tr.selected-color-row { background: #26343b; }
+.color-table .swatch-column { width: 94px; text-align: center; padding: 6px 14px; }
+.reference-color-swatch { display: block; width: 64px; height: 25px; border: 1px solid #ffffff26; border-radius: 2px; padding: 0; margin: 0 auto; }
+.reference-color-swatch:hover { outline: 1px solid var(--teal); outline-offset: 2px; }
+.color-code-cell { white-space: nowrap; color: #a4babf; }
+.color-table .color-empty { text-align: center; padding: 32px 20px; color: #7e94a4; }
+.color-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 1200px) {
+  .color-converter-grid { gap: 18px; }
+  .color-converter-card { padding: 18px; }
+  .color-card-heading > span { display: none; }
+  .color-conversion-result { gap: 10px; }
+  .color-conversion-result input { font-size: 16px; }
+  .color-rgb-inputs { gap: 10px; }
+}
+@media (max-width: 980px) {
+  .color-reference-heading { gap: 14px; }
+  .color-search input[type="search"] { width: 260px; }
+  .color-preview-panel { gap: 16px; }
+  .color-preview-block { width: 145px; }
+  .color-table td, .color-table th { padding: 10px 12px; }
+}
+@media (max-width: 800px) {
+  .color-converter-grid { grid-template-columns: 1fr; }
+  .color-reference-heading { flex-wrap: wrap; }
+  .color-preview-panel { flex-wrap: wrap; }
+}
