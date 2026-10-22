@@ -1,4 +1,4 @@
-# Kikyo · 开发工具
+# KikyoTools · 开发工具
 
 基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”“编码工具”“颜色转换”“JSON 工具”和“二维码”五个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，其他工具在本地浏览器环境处理，均不需要联网。
 
@@ -212,7 +212,7 @@ npm run tauri build
 产物默认位于：
 
 ```text
-src-tauri/target/release/kikyo-calculator.exe
+src-tauri/target/release/KikyoTools.exe
 src-tauri/target/release/bundle/nsis/
 ```
 

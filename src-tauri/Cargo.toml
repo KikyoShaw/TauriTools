@@ -1,12 +1,17 @@
 [package]
-name = "kikyo-calculator"
+name = "kikyo-tools"
 version = "0.1.0"
-description = "A precise programmer calculator"
+description = "Local developer tools for calculations, encoding, colors, JSON and QR codes"
+default-run = "KikyoTools"
 authors = ["Kikyo"]
 edition = "2024"
 
+[[bin]]
+name = "KikyoTools"
+path = "src/main.rs"
+
 [lib]
-name = "kikyo_calculator_lib"
+name = "kikyo_tools_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

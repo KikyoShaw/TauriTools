@@ -1647,7 +1647,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "kikyo-calculator"
+name = "kikyo-tools"
 version = "0.1.0"
 dependencies = [
  "serde",
