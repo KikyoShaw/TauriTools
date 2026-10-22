@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, reactive, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, reactive, ref } from 'vue'
+import ArgbConverter from '../components/ArgbConverter.vue'
 import { namedColors } from '../data/namedColors'
 import { hexToColor, previewTextColor, rgbToColor } from '../utils/color'
 import type { ColorValue } from '../utils/color'
 
+const mode = ref<'rgb' | 'argb'>('rgb')
+const argbConverter = ref<InstanceType<typeof ArgbConverter> | null>(null)
 const channels = reactive({ r: '255', g: '180', b: '0' })
 const hexInput = ref('#CC00FF')
 const rgbResult = ref<ColorValue | null>(rgbToColor('255', '180', '0'))
@@ -55,6 +58,14 @@ function selectColor(hex: string, name = '') {
   selectedName.value = name
   rgbError.value = ''
   hexError.value = ''
+  argbConverter.value?.setRgb(color.hex)
+}
+async function navigateMode(event: KeyboardEvent) {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return
+  event.preventDefault()
+  mode.value = event.key === 'Home' ? 'rgb' : event.key === 'End' ? 'argb' : mode.value === 'rgb' ? 'argb' : 'rgb'
+  await nextTick()
+  document.getElementById(`color-tab-${mode.value}`)?.focus()
 }
 function pick(event: Event) {
   selectColor((event.target as HTMLInputElement).value)
@@ -69,7 +80,12 @@ async function copy(value: string) {
 
 <template>
   <main class="encoding-page color-page">
-    <header class="encoding-header"><div><h1>颜色转换</h1><p>RGB 与十六进制颜色码互转 · 标准 CSS 颜色参考</p></div><span class="encoding-local"><i></i>本地转换 · 无需联网</span></header>
+    <header class="encoding-header"><div><h1>颜色转换</h1><p>RGB / ARGB / RGBA / 32 位整数互转 · 标准 CSS 颜色参考</p></div><span class="encoding-local"><i></i>本地转换 · 无需联网</span></header>
+    <nav class="color-mode-tabs" role="tablist" aria-label="颜色转换模式" @keydown="navigateMode">
+      <button id="color-tab-rgb" type="button" role="tab" :aria-selected="mode === 'rgb'" aria-controls="color-panel-rgb" :tabindex="mode === 'rgb' ? 0 : -1" :class="{ active: mode === 'rgb' }" @click="mode = 'rgb'">RGB / HEX</button>
+      <button id="color-tab-argb" type="button" role="tab" :aria-selected="mode === 'argb'" aria-controls="color-panel-argb" :tabindex="mode === 'argb' ? 0 : -1" :class="{ active: mode === 'argb' }" @click="mode = 'argb'">ARGB / int</button>
+    </nav>
+    <div v-show="mode === 'rgb'" id="color-panel-rgb" role="tabpanel" aria-labelledby="color-tab-rgb">
     <section class="color-converter-grid" aria-label="RGB 与十六进制转换">
       <form class="color-converter-card" novalidate @submit.prevent="convertRgb">
         <div class="color-card-heading"><h2>RGB → 十六进制</h2><span>RGB TO HEX</span></div>
@@ -108,6 +124,8 @@ async function copy(value: string) {
       <label class="color-picker-label"><input :value="preview.hex" type="color" aria-label="颜色选择器" @input="pick" /><span>选择颜色</span></label>
       <button type="button" class="utility-button" @click="copy(preview.css)">复制 CSS</button>
     </section>
+    </div>
+    <ArgbConverter v-show="mode === 'argb'" id="color-panel-argb" ref="argbConverter" role="tabpanel" aria-labelledby="color-tab-argb" @copy="copy" />
 
     <section class="color-reference" aria-labelledby="color-reference-title">
       <div class="color-reference-heading"><div><h2 id="color-reference-title">颜色码对照表 <span class="count-badge">{{ filteredColors.length }} / {{ colors.length }}</span></h2><p>点击色块填入转换区 · 包含 CSS 标准颜色及同色别名</p></div><div class="color-search"><input v-model="search" aria-label="搜索颜色" type="search" placeholder="搜索英文名 / 中文 / HEX / RGB" autocomplete="off" spellcheck="false" /><button v-if="search" type="button" class="text-button" @click="search = ''">清除搜索</button></div></div>
@@ -122,7 +140,7 @@ async function copy(value: string) {
         </table>
       </div>
     </section>
-    <footer class="encoding-page-footer">KIKYO TOOLS <span>RGB 0–255 · HEX #RRGGBB · 不含透明度</span></footer>
+    <footer class="encoding-page-footer">KIKYO TOOLS <span>8 位通道 · ARGB #AARRGGBB · RGBA #RRGGBBAA · int32 / uint32</span></footer>
     <Transition name="toast"><div v-if="notice" class="toast-message" role="status">{{ notice }}</div></Transition>
   </main>
 </template>

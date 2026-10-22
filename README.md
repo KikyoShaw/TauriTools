@@ -4,7 +4,7 @@
 
 ## 界面预览
 
-以下截图来自实际运行的 Tauri 桌面应用。
+以下截图来自实际运行的应用界面。
 
 ### 程序员计算器
 
@@ -26,9 +26,13 @@ Unicode、UTF-8、URL、ASCII / Native、Hex、HTML、Base64 等工具通过分�
 
 ### 颜色转换
 
-RGB 与 HEX 双向转换、颜色预览、取色器，以及可搜索的 CSS 命名颜色表。
+RGB 与 HEX 双向转换、ARGB/RGBA 与 32 位整数互转、透明度预览、取色器，以及可搜索的 CSS 命名颜色表。
 
 ![颜色转换：RGB 与 HEX 转换面板、颜色预览和标准颜色对照表](docs/images/color-converter.png)
+
+#### ARGB ↔ int 与透明度
+
+![ARGB 与整数转换：RGBA 通道、两种 HEX 顺序、32 位整数和棋盘格透明预览](docs/images/argb-converter.png)
 
 ## 功能
 
@@ -63,14 +67,37 @@ RGB 与 HEX 双向转换、颜色预览、取色器，以及可搜索的 CSS 命
 
 ## 颜色转换
 
-顶部选择“颜色转换”可使用 RGB 与十六进制颜色码的双向转换：
+顶部选择“颜色转换”，页面内提供 **RGB / HEX** 和 **ARGB / int** 两种模式。
+
+### RGB / HEX
 
 - **RGB → HEX**：三个通道均为 `0..255` 的整数，例如 `255, 180, 0` → `#FFB400`。
 - **HEX → RGB**：支持 `#RRGGBB` 和 `#RGB`，可省略 `#`，不区分大小写。例如 `#CC00FF` → `204, 0, 255`，`#F80` → `255, 136, 0`。
 - 转换结果使用规范的大写 HEX，支持复制 HEX、RGB 及 CSS `rgb(...)`。
-- 颜色预览随成功转换更新；取色器及对照表色块会同时填入两个转换面板。
+
+### ARGB / int
+
+编辑 RGBA 通道、ARGB、RGBA 或十进制整数时，其他格式自动联动：
+
+| 格式 | 规则 |
+| --- | --- |
+| A / R / G / B | 每个通道为 `0..255` 的整数；A=0 全透明，A=255 不透明 |
+| ARGB | `#AARRGGBB`，Alpha 在前，支持 `#ARGB` 四位简写 |
+| RGBA | `#RRGGBBAA`，Alpha 在后，支持 `#RGBA` 四位简写；这是 CSS 八位 HEX 的顺序 |
+| int32 | 有符号 32 位整数，范围 `-2147483648..2147483647` |
+| uint32 | 无符号 32 位整数，范围 `0..4294967295` |
+
+整数统一按 `0xAARRGGBB` 打包，计算式为 `A × 16777216 + R × 65536 + G × 256 + B`。int32 与 uint32 表示同一组 32 位位模式。HEX 及整数都是标准化结果，不对 RGB 做预乘 Alpha。
+
+示例：`A=25, R=G=B=255` → ARGB `#19FFFFFF`、RGBA `#FFFFFF19`、整数 `436207615`；不透明白色为 int32 `-1` / uint32 `4294967295`。
+
+提供棋盘格透明预览、Alpha 滑块和取色器，可复制两种 HEX、有符号/无符号整数及 CSS `rgba(...)`。Alpha 的 CSS 小数显示保留最多六位；整数和 HEX 保留精确的八位通道值。输入不完整或无效时显示错误，其他字段及预览保留最近有效值。
+
+### 颜色对照表
+
 - 对照表包含 **148 个 CSS 标准命名颜色**，支持英文名、中文描述、HEX 和 RGB 搜索，保留 Aqua/Cyan、Gray/Grey 等同色别名。
-- 无效通道、小数、透明度颜色码等输入会显示错误，不会自动截断或取整。切换 Tab 保留输入和结果。
+- 取色器及对照表色块会填入颜色。ARGB 模式下更改 RGB 时保留最近有效的 Alpha。
+- 无效通道、小数、越界整数等输入会显示错误，不会自动截断或取整。切换模式和 Tab 均保留输入和结果。
 
 交互参考 [RGB 与十六进制颜色转换工具](https://www.sioe.cn/yingyong/yanse-rgb-16/)，颜色名称和数值采用 CSS 标准。
 
@@ -270,7 +297,7 @@ npm run test:encoding
 npm run test:colors
 ```
 
-覆盖 RGB/HEX 双向转换、边界与非法输入、148 个命名颜色与浏览器 CSS 标准比对、搜索、取色器、Tab 状态和窄窗口布局。
+覆盖 RGB/HEX、ARGB/RGBA/整数双向转换、Alpha 与有符号/无符号边界、非法输入、148 个命名颜色与浏览器 CSS 标准比对、搜索、取色器、Tab 状态和窄窗口布局。
 
 ## 项目结构
 
@@ -284,10 +311,10 @@ src/style.css                     计算器深色主题与响应式样式
 src/encoding.css                  工具导航、编码与时间戳样式
 src/color.css                     颜色转换页面样式
 src/data/namedColors.ts            148 个 CSS 标准命名颜色
-src/components/                   分组键盘、转换面板、时间戳工具
+src/components/                   分组键盘、转换面板、时间戳与 ARGB 工具
 src/utils/encoding.ts              本地文本编码转换
 src/utils/timestamp.ts             日期校验和时间戳转换
-src/utils/color.ts                 RGB/HEX 校验、转换和预览文字颜色
+src/utils/color.ts                 RGB/ARGB/RGBA/整数校验与转换
 src/composables/useCalculator.ts  计算、历史、变量和持久化状态
 src/services/calculator.ts        Tauri 命令调用
 src/types/calculator.ts           前后端数据类型
