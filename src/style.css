@@ -50,8 +50,6 @@ h2 { margin: 0; font-size: 14px; font-weight: 500; }
 .expression-editor textarea::placeholder { color: #5d6773; font-size: 18px; }
 .expression-output { display: flex; align-items: baseline; gap: 12px; color: var(--teal); font-size: 21px; line-height: 1.7; overflow-wrap: anywhere; padding-top: 4px; }
 .expression-output strong { font-weight: 500; }
-.output-marker { letter-spacing: -2px; flex-shrink: 0; }
-.result-hex { margin-left: 6px; }
 .output-placeholder { color: #627579; font-size: 16px; }
 .error-output { color: #e3a097; font-size: 16px; }
 .editor-bottom { display: flex; justify-content: space-between; gap: 20px; color: #65707c; font-size: 10px; margin-top: auto; padding-top: 22px; }

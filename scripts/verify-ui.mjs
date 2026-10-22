@@ -34,7 +34,7 @@ async function run(expression, expected) {
 async function conversion(name, value, expected) {
   await field(name).fill(value)
   await field(name).press('Enter')
-  await waitUntil(async () => await field('decimal').inputValue() === expected, `${name}=${value} 未转换成 ${expected}`)
+  await waitUntil(async () => await page.locator('.conversion-panel').getAttribute('aria-busy') === 'false' && await field('decimal').inputValue() === expected, `${name}=${value} 未转换成 ${expected}`)
 }
 
 try {
@@ -42,10 +42,11 @@ try {
   await page.reload()
   await result.waitFor()
   assert.equal(await result.textContent(), '17')
-  assert.match(await page.locator('.expression-output').textContent(), /17.*11h/)
+  assert.equal((await page.locator('.expression-output').textContent()).trim(), '17')
+  assert.equal(await page.locator('.hex-result strong').textContent(), '11h')
   assert.equal(await field('binary').inputValue(), '10001')
   assert.equal(await page.locator('.runtime-status').textContent(), 'Rust 计算引擎/64 位精确整数')
-  observations.push('真实 Tauri 窗口首次启动 → 17 [11h]，BIN=10001，Rust 引擎已连接')
+  observations.push('真实 Tauri 窗口首次启动 → 主结果仅显示17，HEX栏=11h，BIN=10001，Rust 引擎已连接')
   await page.screenshot({ path: 'artifacts/calculator-desktop.png', fullPage: true })
 
   await run('9007199254740993 + 1', '9007199254740994')
@@ -59,6 +60,8 @@ try {
   assert.equal(await page.locator('.variable-entry').filter({ hasText: 'z' }).count(), 0)
   observations.push('多行第二条除零 → 中文错误，x 保持68，失败批次未写入变量')
   await run('x + y', '85')
+  await run('FFFFFFFFFFFFFFFFh', '-1')
+  assert.equal((await page.locator('.expression-output').textContent()).trim(), '-1')
   await run('FFFFFFFFFFFFFFFFh & 0xFF', '255')
   await run('1 << 63', '-9223372036854775808')
   await editor.fill('1 >> 64')
@@ -78,7 +81,7 @@ try {
   await editor.evaluate(input => { input.focus(); input.setSelectionRange(5, 7) })
   await page.getByRole('button', { name: '7', exact: true }).click()
   assert.equal(await editor.inputValue(), '12 + 7')
-  await page.getByRole('button', { name: '删除光标前的字符', exact: true }).click()
+  await page.getByTitle('删除光标前的字符', { exact: true }).click()
   assert.equal(await editor.inputValue(), '12 + ')
   await page.getByRole('button', { name: 'Sin', exact: true }).click()
   await page.getByRole('button', { name: '9', exact: true }).click()
@@ -135,14 +138,14 @@ try {
   // Resize the WebView viewport to the minimum supported window size.
   const cdp = await context.newCDPSession(page)
   await cdp.send('Emulation.setDeviceMetricsOverride', { width: 960, height: 680, deviceScaleFactor: 1, mobile: false })
-  const dimensions = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }))
-  assert.equal(dimensions.scroll, dimensions.width, '最小窗口出现横向溢出')
-  assert(await page.getByRole('button', { name: '执行表达式 · Enter', exact: true }).isVisible())
+  const dimensions = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }))
+  assert(dimensions.scroll <= dimensions.width, '最小窗口出现横向溢出')
+  assert(await page.getByTitle('执行表达式 · Enter', { exact: true }).isVisible())
   await page.screenshot({ path: 'artifacts/calculator-960.png', fullPage: true })
   await cdp.send('Emulation.clearDeviceMetricsOverride')
   observations.push('960×680窗口 → 无页面横向溢出，四行按键和转换栏可用')
 
-  await page.getByRole('button', { name: '复制十进制结果', exact: true }).click()
+  await page.getByTitle('复制十进制结果', { exact: true }).click()
   await page.getByRole('status').waitFor()
   assert.match(await page.getByRole('status').textContent(), /已复制/)
   observations.push('复制按钮 → 已复制计算结果')
@@ -154,6 +157,9 @@ try {
   await writeFile('artifacts/verification.json', JSON.stringify({ verdict: 'FAIL', observations, error: String(error), failures }, null, 2))
   throw error
 } finally {
+  const cleanupSession = await context.newCDPSession(page)
+  await cleanupSession.send('Emulation.clearDeviceMetricsOverride').catch(() => {})
+  await cleanupSession.detach()
   if (original !== null) {
     await page.evaluate(({ key, value }) => localStorage.setItem(key, value), { key: storageKey, value: original })
     await page.reload()

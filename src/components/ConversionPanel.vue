@@ -58,7 +58,7 @@ function cancel(field: string, event: KeyboardEvent) {
 </script>
 
 <template>
-  <section class="conversion-panel" aria-labelledby="conversion-title">
+  <section class="conversion-panel" aria-labelledby="conversion-title" :aria-busy="pending">
     <div class="section-heading"><h2 id="conversion-title">底数转换</h2><span class="section-note">64 BIT</span></div>
     <div class="conversion-fields">
       <label v-for="field in fields" :key="field.key" class="conversion-row" :title="field.title">
