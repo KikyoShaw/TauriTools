@@ -1,6 +1,28 @@
-# Kikyo · 程序员计算器
+# Kikyo · 开发工具
 
-基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的桌面计算器。界面采用深色主题，提供表达式输入、分组按键、历史记录、变量和进制转换。Vue 负责界面交互，Rust 负责表达式解析与数值运算，计算过程不需要联网。
+基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”和“编码工具”两个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，编码和时间转换在本地浏览器环境完成，均不需要联网。
+
+## 界面预览
+
+以下截图来自实际运行的 Tauri 桌面应用。
+
+### 程序员计算器
+
+支持表达式、位运算、历史记录、变量和多进制转换。
+
+![程序员计算器：表达式计算、分组键盘和右侧进制转换](docs/images/calculator.png)
+
+### 编码工具
+
+Unicode、UTF-8、URL、ASCII / Native、Hex、HTML、Base64 等工具通过分类 Tab 切换。
+
+![编码工具：Unicode 编码示例与左右输入结果区域](docs/images/encoding-tools.png)
+
+### Unix 时间戳
+
+支持时间戳和日期双向转换，以及秒/毫秒、本地时区/UTC 切换。
+
+![Unix 时间戳：时间戳与日期双向转换](docs/images/timestamp.png)
 
 ## 功能
 
@@ -12,6 +34,26 @@
 - 主结果区只显示数值；各进制表示独立显示在下方结果栏和右侧转换栏。
 - 历史回填、变量点击插入、结果复制、键盘快捷键。
 - 历史记录、变量和角度模式保存在本地，历史最多保留 100 条。
+
+## 编码工具
+
+顶部选择“编码工具”，再切换分类。每个分类分别保留输入、结果和错误信息；左侧输入内容，右侧显示纯文本结果，支持复制、交换和清空。编码内容仅保存在当前窗口内存中，关闭应用后清除。
+
+| 工具 | 功能与格式 |
+| --- | --- |
+| Unicode 编码 | 文本与 `\uXXXX` / `\u{...}` 转义互转，支持中文和 Emoji；“中文转 Unicode”保留 ASCII 字符 |
+| UTF-8 编码 | UTF-8 字节转十六进制，如 `中` → `E4 B8 AD`；解码支持空格、`0x` 和 `\x` 格式 |
+| URL 编码/解码 | URL 参数、完整 URL、表单三种模式；表单模式用 `+` 表示空格 |
+| Unix 时间戳 | 时间戳与日期双向转换，秒/毫秒、本地时间/UTC、当前时间、ISO 8601 带时区日期 |
+| ASCII / Native | 类似 `native2ascii`：仅将非 ASCII 字符转为 Unicode 转义，反向恢复文本 |
+| Hex 编码/解码 | UTF-8 文本与连续十六进制字节互转 |
+| HTML 编码/解码 | HTML 特殊字符转义及命名/数字实体解码，结果不作为 HTML 执行 |
+| Base64 | UTF-8 文本的标准或 URL 安全 Base64 编码与解码 |
+| Base 编码/解码 | Base16、RFC 4648 Base32、Bitcoin 字符集 Base58 |
+
+文本框中 `Ctrl+Enter` 编码，`Ctrl+Shift+Enter` 解码。二进制解码使用严格 UTF-8，非法字节或无效转义会显示错误。Base58 为避免大文本转换阻塞窗口，输入有单独的长度限制。
+
+时间戳单位需要明确选择；无时区日期按选择的本地时区或 UTC 解释，ISO 日期的 `Z` / 时区偏移优先。无效日期（如 2 月 30 日）会报错。秒级输出向下取整，本地夏令时重复时段采用较早一次；需要消除歧义时输入带偏移的 ISO 日期。
 
 ## 开发环境
 
@@ -48,7 +90,7 @@ npm.cmd run tauri dev
 npm run dev
 ```
 
-浏览器地址为 `http://127.0.0.1:1420`。浏览器预览会显示提示；表达式和进制计算需要在 Tauri 桌面窗口中执行。
+浏览器地址为 `http://127.0.0.1:1420`。编码工具可直接使用；计算器预览会显示提示，表达式和数值进制计算需要在 Tauri 桌面窗口中执行。
 
 ## 构建
 
@@ -195,13 +237,26 @@ npm run test:ui
 
 可通过 `CDP_URL` 环境变量指定其他地址。脚本通过真实界面验证大整数、变量、错误处理、角度模式、按键、进制和字符转换、页面重载后的持久化及较小窗口布局。截图和 JSON 报告写入 `artifacts/`，该目录不纳入版本控制。脚本执行期间会操作桌面窗口；如果开始前存在本地记录，结束时恢复原记录。
 
+编码工具可直接进行浏览器界面验证。先运行 `npm run dev`，再在另一个终端执行：
+
+```powershell
+npm run test:encoding
+```
+
+该脚本默认使用本机 Microsoft Edge；可用 `BROWSER_PATH` 指定浏览器路径，或设置 `CDP_URL` 连接已开启调试端口的 Tauri 窗口。覆盖各编码往返、非法输入、Tab 状态保留、时间戳和日期校验，并保存截图到 `artifacts/`。
+
 ## 项目结构
 
 ```text
 public/calculator.svg             应用图标源文件
-src/App.vue                       主窗口布局与编辑操作
-src/style.css                     深色主题与响应式样式
-src/components/                   分组键盘、转换面板
+src/App.vue                       两个一级 Tab 的页面容器
+src/views/CalculatorPage.vue       计算器页面
+src/views/EncodingPage.vue         编码工具页面及二级分类
+src/style.css                     计算器深色主题与响应式样式
+src/encoding.css                  工具导航、编码与时间戳样式
+src/components/                   分组键盘、转换面板、时间戳工具
+src/utils/encoding.ts              本地文本编码转换
+src/utils/timestamp.ts             日期校验和时间戳转换
 src/composables/useCalculator.ts  计算、历史、变量和持久化状态
 src/services/calculator.ts        Tauri 命令调用
 src/types/calculator.ts           前后端数据类型

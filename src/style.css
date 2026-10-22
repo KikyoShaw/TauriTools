@@ -24,7 +24,7 @@ button, input, textarea { -webkit-tap-highlight-color: transparent; }
 button:focus-visible, input:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
 ::selection { background: #3c5a60; color: #eef5f5; }
 button { color: inherit; }
-.app-shell { min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
+.app-shell { min-height: calc(100vh - 56px); display: grid; grid-template-columns: minmax(0, 1fr) 360px; }
 .workspace { padding: 0 26px; display: flex; flex-direction: column; min-width: 0; }
 .workspace-header { height: 78px; flex-shrink: 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .app-identity { display: flex; align-items: center; gap: 12px; white-space: nowrap; }

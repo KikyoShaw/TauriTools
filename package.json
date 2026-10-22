@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
-    "test:ui": "node scripts/verify-ui.mjs"
+    "test:ui": "node scripts/verify-ui.mjs",
+    "test:encoding": "node scripts/verify-encoding.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.0",

@@ -12,7 +12,7 @@
   "app": {
     "windows": [{
       "label": "main",
-      "title": "Kikyo · 程序员计算器",
+      "title": "Kikyo · 开发工具",
       "width": 1440,
       "height": 900,
       "minWidth": 960,
@@ -28,7 +28,7 @@
   "bundle": {
     "active": true,
     "targets": ["nsis"],
-    "shortDescription": "支持 64 位整数、科学运算和进制转换的程序员计算器",
+    "shortDescription": "提供程序员计算器、文本编码转换和 Unix 时间戳工具",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico", "icons/icon.icns"]
   }
 }
