@@ -14,7 +14,8 @@
     "test:colors": "node scripts/verify-colors.mjs",
     "test:json": "node scripts/verify-json.mjs",
     "test:qrcode": "node scripts/verify-qrcode.mjs",
-    "test:debug": "node scripts/verify-debug.mjs"
+    "test:debug": "node scripts/verify-debug.mjs",
+    "test:image": "node scripts/verify-image.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2.10.0",
