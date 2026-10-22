@@ -1,6 +1,6 @@
 # Kikyo · 开发工具
 
-基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”“编码工具”和“颜色转换”三个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，编码和时间转换在本地浏览器环境完成，均不需要联网。
+基于 **Tauri 2 + Vue 3 + TypeScript + Rust** 的本地工具箱，包含可切换的“计算器”“编码工具”“颜色转换”和“JSON 工具”四个页面。界面采用深色主题，页面切换保留各自输入。Rust 负责计算器的表达式运算，编码和时间转换在本地浏览器环境完成，均不需要联网。
 
 ## 界面预览
 
@@ -33,6 +33,12 @@ RGB 与 HEX 双向转换、ARGB/RGBA 与 32 位整数互转、透明度预览、
 #### ARGB ↔ int 与透明度
 
 ![ARGB 与整数转换：RGBA 通道、两种 HEX 顺序、32 位整数和棋盘格透明预览](docs/images/argb-converter.png)
+
+### JSON 工具
+
+JSON 格式化、压缩、字符串转义和可展开的树形解析，保留大整数与重复键。
+
+![JSON 工具：格式化输入、树形解析、大整数和类型展示](docs/images/json-tools.png)
 
 ## 功能
 
@@ -101,6 +107,28 @@ RGB 与 HEX 双向转换、ARGB/RGBA 与 32 位整数互转、透明度预览、
 
 交互参考 [RGB 与十六进制颜色转换工具](https://www.sioe.cn/yingyong/yanse-rgb-16/)，颜色名称和数值采用 CSS 标准。
 
+## JSON 工具
+
+顶部选择“JSON 工具”，在左侧粘贴内容，右侧切换文本结果或树形视图。数据完全在本地处理，桌面端及浏览器预览均可使用。
+
+| 操作 | 行为 |
+| --- | --- |
+| 解析 / 格式化 | 严格校验 JSON，按 2 空格、4 空格或 Tab 缩进输出 |
+| 压缩 | 去除字符串外的无用空白，保留原始数字写法和键顺序 |
+| 转义 | 将整段输入转为 JSON 字符串，包含外层双引号，支持任意文本 |
+| 反转义 | 解码一层 JSON 字符串；也支持不带外层引号的转义文本 |
+| 压缩并转义 | 先校验并压缩 JSON，再将其转为 JSON 字符串 |
+| 树形 | 显示对象、数组及标量类型，可逐项或全部展开/折叠 |
+| 结果作为输入 | 将结果回填左侧，方便连续处理 |
+
+- 支持对象、数组以及字符串、数字、布尔值、`null` 根节点。
+- 数值不经过 JavaScript `Number` 转换，`9007199254740993`、`-0`、`1e+03` 等原文在格式化与压缩后保持不变。
+- 重复键会提示并按原顺序保留；格式化不会排序、合并或覆盖成员。
+- 严格 JSON 不接受注释、单引号、尾逗号、`NaN` 等扩展语法。错误提供行列及“定位错误”按钮。
+- 输入修改后会提示结果尚未更新。转义和反转义输出为文本，需要解析时将结果回填再格式化。
+- `Ctrl+Enter` 格式化，`Ctrl+Shift+Enter` 压缩。切换页面保留内容，关闭窗口后不保存 JSON 数据。
+- 单次输入最多 2 Mi 个 UTF-16 代码单元，最大深度 128 层、最多 50,000 个值节点。树形视图分批显示展开节点，每批 1,000 项；长字符串在树形中省略显示，完整内容保留在文本结果中。
+
 ## 开发环境
 
 Windows 开发需要：
@@ -136,7 +164,7 @@ npm.cmd run tauri dev
 npm run dev
 ```
 
-浏览器地址为 `http://127.0.0.1:1420`。编码工具和颜色转换可直接使用；计算器预览会显示提示，表达式和数值进制计算需要在 Tauri 桌面窗口中执行。
+浏览器地址为 `http://127.0.0.1:1420`。编码工具、颜色转换和 JSON 工具可直接使用；计算器预览会显示提示，表达式和数值进制计算需要在 Tauri 桌面窗口中执行。
 
 ## 构建
 
@@ -299,11 +327,19 @@ npm run test:colors
 
 覆盖 RGB/HEX、ARGB/RGBA/整数双向转换、Alpha 与有符号/无符号边界、非法输入、148 个命名颜色与浏览器 CSS 标准比对、搜索、取色器、Tab 状态和窄窗口布局。
 
+JSON 工具的界面验证：
+
+```powershell
+npm run test:json
+```
+
+默认连接 `http://127.0.0.1:1420`，可通过 `APP_URL` 指定其他开发地址，或通过 `CDP_URL` 接入桌面窗口。覆盖格式化缩进、树形展开、数值原文与重复键保留、转义往返、错误定位、Tab 状态和窄窗口布局；截图与报告写入 `artifacts/`，示例截图同步到 `docs/images/json-tools.png`。
+
 ## 项目结构
 
 ```text
 public/calculator.svg             应用图标源文件
-src/App.vue                       三个一级 Tab 的页面容器
+src/App.vue                       四个一级 Tab 的页面容器
 src/views/CalculatorPage.vue       计算器页面
 src/views/EncodingPage.vue         编码工具页面及二级分类
 src/views/ColorPage.vue            RGB/HEX 转换、颜色预览和对照表
@@ -314,6 +350,10 @@ src/data/namedColors.ts            148 个 CSS 标准命名颜色
 src/components/                   分组键盘、转换面板、时间戳与 ARGB 工具
 src/utils/encoding.ts              本地文本编码转换
 src/utils/timestamp.ts             日期校验和时间戳转换
+src/views/JsonPage.vue             JSON 解析、压缩和转义页面
+src/json.css                      JSON 编辑区与树形视图样式
+src/components/JsonTree.vue        分批渲染的可折叠 JSON 树
+src/utils/json.ts                 保留数字原文与重复键的 JSON 解析器
 src/utils/color.ts                 RGB/ARGB/RGBA/整数校验与转换
 src/composables/useCalculator.ts  计算、历史、变量和持久化状态
 src/services/calculator.ts        Tauri 命令调用

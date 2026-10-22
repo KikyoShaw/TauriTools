@@ -3,11 +3,13 @@ import { nextTick, ref } from 'vue'
 import CalculatorPage from './views/CalculatorPage.vue'
 import EncodingPage from './views/EncodingPage.vue'
 import ColorPage from './views/ColorPage.vue'
+import JsonPage from './views/JsonPage.vue'
 
 const tabs = [
   { id: 'calculator', label: '计算器', component: CalculatorPage },
   { id: 'encoding', label: '编码工具', component: EncodingPage },
   { id: 'color', label: '颜色转换', component: ColorPage },
+  { id: 'json', label: 'JSON 工具', component: JsonPage },
 ] as const
 const active = ref(0)
 

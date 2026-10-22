@@ -1,0 +1,69 @@
+.json-workspace { border: 1px solid var(--border); background: #1c2229; padding: 22px; border-radius: 3px; min-width: 0; }
+.json-toolbar { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.json-main-actions, .json-settings { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.json-settings { gap: 18px; }
+.json-settings label { display: flex; align-items: center; gap: 9px; color: #8399aa; font-size: 11px; }
+.json-settings select { padding: 8px 9px; border: 1px solid #40515f; border-radius: 3px; background: #232e37; color: #b2c6d3; font-size: 11px; }
+.json-help { font-size: 11px; line-height: 1.9; color: #6e8699; margin: 17px 0 21px; }
+.json-editors { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; }
+.json-input-panel, .json-output-panel { display: flex; min-width: 0; flex-direction: column; }
+.json-editor-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 32px; margin-bottom: 11px; color: #99adbc; font-size: 12px; }
+.json-editor-heading small { color: #607b8e; font-size: 10px; margin-left: 6px; }
+.json-editors textarea { width: 100%; height: clamp(380px, 53vh, 650px); min-height: 260px; resize: vertical; border: 1px solid #3d4c59; border-radius: 3px; background: #171d23; color: #c6d5df; padding: 16px; font-size: 14px; line-height: 1.8; tab-size: 2; outline: 0; white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: hidden; }
+.json-editors textarea:focus { border-color: #80b1b0; }
+.json-editors textarea::placeholder { color: #516a7c; }
+.json-editors textarea[readonly] { color: #93c8c2; background: #192126; }
+.json-editors textarea[aria-invalid="true"] { border-color: #ad7467; }
+.json-result-tabs { display: flex; border: 1px solid #3b4a57; padding: 2px; border-radius: 3px; }
+.json-result-tabs button { background: transparent; border: 0; color: #718d9f; padding: 4px 12px; border-radius: 2px; font-size: 11px; }
+.json-result-tabs button.active { color: var(--teal); background: #2b4144; }
+.json-status { display: flex; flex-wrap: wrap; gap: 8px 18px; min-height: 39px; align-items: center; color: #6e8797; font-size: 11px; padding: 11px 0; }
+.json-valid { display: inline-flex; align-items: center; gap: 8px; color: #8bc4b5; }
+.json-valid i { width: 5px; height: 5px; background: #8bc4b5; border-radius: 50%; }
+.json-stale, .json-duplicate-warning { color: var(--amber); }
+.json-duplicate-warning { font-size: 11px; line-height: 1.8; margin: 0 0 14px; }
+.json-error { margin: 14px 0; display: flex; justify-content: space-between; align-items: center; gap: 20px; border: 1px solid #795749; border-radius: 3px; padding: 12px 14px; color: #ddb0a4; background: #322722; }
+.json-error > div { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.json-error strong { font-size: 12px; font-weight: 500; }
+.json-error span { font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+.json-error > .utility-button { font-size: 11px; padding: 8px 12px; flex-shrink: 0; }
+.json-bottom-actions { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding-top: 8px; }
+.json-bottom-actions > span { font-size: 10px; color: #5f778b; }
+.json-bottom-actions > div { display: flex; gap: 10px; }
+.json-bottom-actions .heading-dot { margin: 0 5px; }
+.json-tree-panel { display: flex; flex-direction: column; height: clamp(380px, 53vh, 650px); min-width: 0; border: 1px solid #3d4c59; border-radius: 3px; background: #182026; }
+.json-tree-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 9px 12px; border-bottom: 1px solid #31414c; background: #202a32; flex-shrink: 0; }
+.json-tree-toolbar > span { color: #6d889b; font-size: 10px; }
+.json-tree-toolbar > div { display: flex; gap: 9px; flex-shrink: 0; }
+.json-tree-toolbar .text-button { font-size: 10px; }
+.json-tree { overflow: auto; min-height: 0; flex: 1; padding: 10px 0; scrollbar-width: thin; scrollbar-color: #415565 transparent; }
+.json-tree-row { display: flex; align-items: baseline; min-width: max-content; gap: 8px; padding-right: 16px; line-height: 30px; font-size: 12px; }
+.json-tree-row:hover { background: #a0ced208; }
+.json-tree-toggle { align-self: center; flex-shrink: 0; width: 19px; height: 24px; padding: 0; border: 0; background: transparent; color: #81a2b3; font-size: 16px; line-height: 1; }
+.json-tree-toggle:hover { color: var(--teal); }
+.json-tree-spacer { flex-shrink: 0; width: 19px; }
+.json-tree-key { color: #b5cbd7; white-space: nowrap; }
+.json-tree-key > span { margin-left: 3px; color: #5b778a; }
+.json-tree-container { color: #7b99ab; font-size: 11px; }
+.json-tree-container > span { margin-left: 5px; color: #657e91; }
+.json-tree-value { white-space: nowrap; max-width: 700px; overflow: hidden; text-overflow: ellipsis; }
+.json-token-string { color: #c9ad83; }
+.json-token-number { color: #8bc9bd; }
+.json-token-boolean { color: #90b8e4; }
+.json-token-null { color: #b49aca; }
+.json-tree-more { padding: 15px; display: flex; align-items: center; gap: 15px; color: #7190a0; font-size: 11px; }
+.json-tree-more .utility-button { font-size: 10px; padding: 6px 10px; }
+
+@media (max-width: 1200px) {
+  .json-workspace { padding: 18px; }
+  .json-editors { gap: 18px; }
+  .json-toolbar { gap: 12px; }
+  .json-editors textarea { font-size: 13px; padding: 13px; }
+  .json-tree-toolbar { flex-wrap: wrap; gap: 5px; }
+  .json-bottom-actions { flex-wrap: wrap; }
+}
+@media (max-width: 980px) {
+  .json-toolbar .utility-button { padding: 8px 10px; font-size: 11px; }
+  .json-tree-row { font-size: 11px; }
+  .json-editor-heading small { font-size: 9px; }
+}
